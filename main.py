@@ -1,5 +1,5 @@
-#VERSION 3 du projet
-#08/02/2013
+#VERSION 4 du projet
+#05/03/2013
 #Corrigée par Sébas
 
 #REGLES A REPSECTER POUR LE PROJET
@@ -111,7 +111,7 @@ def changer_informations_et_joueur():
                     elif(joueur == 2):
                         label1["fg"] = couleur2
                         
-                    label1["text"] = 'FIN DE LA PARTIE : Le joueur', joueur, 'a gagné en', nombreDeCoups, 'coups au total !'
+                    label1["text"] = 'FIN DE LA PARTIE : Le joueur {} a gagné en {} coups au total !'.format(joueur, nombreDeCoups)
 
                 #Match nul
                 elif(nombreDeCoups >= 42):
@@ -127,7 +127,7 @@ def changer_informations_et_joueur():
                         joueur = 1
                         label1["fg"] = couleur1
 
-                    label1["text"] = 'Au joueur', joueur, 'de jouer son coup n°', nombreDeCoups // 2 + 1
+                    label1["text"] = 'Au joueur {} de jouer son coup n° {}'.format(joueur,nombreDeCoups // 2 + 1)
 
                 label1.pack(fill = BOTH)
 
@@ -212,22 +212,57 @@ def alignement_dans_un_sens(mouvementX, mouvementY):
     
     return alignementEnCours;
 
+def initialisation():
+    global colonne
+    global joueur
+    global vainqueur
+    global nombreDeCoups
+    global ligneJetons
+    global colonneJeton
+    initialiser_grille(0)
+    colonne = 0
+    joueur = 2 #2 car dès le début, la fonction changer_informations_et_joueur va la mettre à 1
+    vainqueur = 0
+    nombreDeCoups = 0
+    ligneJeton = 0
+    colonneJeton = 0
+    changer_informations_et_joueur()
+    affichage()
+
+def jeu(parametreBool):
+    global modeAvecIA
+    modeAvecIA=parametreBool
+    initialisation()
+    
+def modif_couleur(c1, c2, c3, c4):
+    global joueur
+    global couleurPlateau
+    global couleur0
+    global couleur1
+    global couleur2
+
+    couleurPlateau = c1
+    couleur0 = c2
+    couleur1 = c3
+    couleur2 = c4
+        
+    can.configure(bg=couleurPlateau)
+    if(joueur==1):
+        joueur=2
+    else:
+        joueur=1
+    changer_informations_et_joueur()
+    affichage()
+
 #PROGRAMME PRINCIPAL :
 #_____________________
 
-#Les variables suivantes devront être intéractives dans le menu (en inrégrant des valeurs classiques par défaut)
-"""modeAvecIA = True
-couleurPlateau = 'white'
-couleur0 = 'black'
-couleur1 = 'yellow'
-couleur2 = 'red'"""
-
 """ Valeurs par défaut """
 modeAvecIA = False
-couleurPlateau = 'white'
+couleurPlateau = 'navy'
 couleur0 = 'grey'
-couleur1 = 'blue'
-couleur2 = 'green'
+couleur1 = 'red'
+couleur2 = 'yellow'
     
 grille = [[0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0],
@@ -236,21 +271,43 @@ grille = [[0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0]]
 
-initialiser_grille(0)
-colonne = 0
-joueur = 2 #2 car dès le début, la fonction changer_informations_et_joueur va la mettre à 1
-vainqueur = 0
-nombreDeCoups = 0
-ligneJeton = 0
-colonneJeton = 0
-
 fenetre = Tk()
-can = Canvas(fenetre, width = 430, height = 370, bg = couleurPlateau)
-label1 = Label(fenetre, fg = couleur2, bg = 'black')
 
-joueur = 2
-changer_informations_et_joueur()
-affichage()
+can = Canvas(fenetre, width = 430, height = 370, bg = couleurPlateau)
+label1 = Label(fenetre, fg = couleur2, bg = 'grey')
+
+menubar = Menu(fenetre)
+nouvelle_partie= Menu(menubar, tearoff=0)
+nouvelle_partie.add_command(label="Nouvelle partie à 1 joueur (IA moyenne)", command=lambda: jeu(True))
+nouvelle_partie.add_command(label="Nouvelle partie à 2 joueurs", command=lambda: jeu(False))
+nouvelle_partie.add_separator()
+nouvelle_partie.add_command(label="Quitter le jeu", command=fenetre.destroy)
+menubar.add_cascade(label="Parties", menu=nouvelle_partie)
+
+options= Menu(menubar, tearoff=0)
+options.add_command(label="Thème du Puissance 4", command=lambda: modif_couleur('navy', 'grey', 'red', 'yellow'))
+options.add_command(label="Thème Jeux de dames", command=lambda: modif_couleur('gold', 'grey', 'black', 'white'))
+options.add_separator()
+
+sous_menu1=Menu(menubar, tearoff=0)
+sous_menu1.add_command(label="Rouge", command=lambda: modif_couleur(couleurPlateau, couleur0, 'red', couleur2))
+sous_menu1.add_command(label="Bleu", command=lambda: modif_couleur(couleurPlateau, couleur0, 'blue', couleur2))
+sous_menu1.add_command(label="Marron", command=lambda: modif_couleur(couleurPlateau, couleur0, 'brown', couleur2))
+sous_menu1.add_command(label="Noir", command=lambda: modif_couleur(couleurPlateau, couleur0, 'black', couleur2))
+options.add_cascade(label="Couleur du joueur 1", menu=sous_menu1)
+
+sous_menu2=Menu(menubar, tearoff=0)
+sous_menu2.add_command(label="Jaune", command=lambda: modif_couleur(couleurPlateau, couleur0, couleur1, 'yellow'))
+sous_menu2.add_command(label="Cyan", command=lambda: modif_couleur(couleurPlateau, couleur0, couleur1, 'cyan'))
+sous_menu2.add_command(label="Vert clair", command=lambda: modif_couleur(couleurPlateau, couleur0, couleur1, 'green'))
+sous_menu2.add_command(label="Blanc", command=lambda: modif_couleur(couleurPlateau, couleur0, couleur1, 'white'))
+options.add_cascade(label="Couleur du joueur 2", menu=sous_menu2)
+
+menubar.add_cascade(label="Modifier les couleurs", menu=options)
 
 can.bind('<Button-1>', fonction_evenement) #On attend le clic
+fenetre.config(menu=menubar)
+fenetre.title("Puissance 4 !")
+
+jeu(False)
 fenetre.mainloop()
