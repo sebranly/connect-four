@@ -1,5 +1,5 @@
-#VERSION 4 du projet
-#05/03/2013
+#VERSION 5 du projet
+#06/03/2013
 #Corrigée par Sébas
 
 #REGLES A REPSECTER POUR LE PROJET
@@ -229,9 +229,18 @@ def initialisation():
     changer_informations_et_joueur()
     affichage()
 
-def jeu(parametreBool):
+def nouveau_jeu(parametreBool):
     global modeAvecIA
-    modeAvecIA=parametreBool
+    
+    if(modeAvecIA != parametreBool): #Si le nombre de joueurs a changé, il faut mettre à jour les avatars ET modeAvecIA
+        modeAvecIA=parametreBool
+        if(modeAvecIA==True):
+            changer_avatar(2, photoOrdinateur)
+            avatar.entryconfigure(1, state=DISABLED)
+        else:
+            changer_avatar(2, photoSackboy)
+            avatar.entryconfigure(1, state=NORMAL)
+
     initialisation()
     
 def modif_couleur(c1, c2, c3, c4):
@@ -254,6 +263,18 @@ def modif_couleur(c1, c2, c3, c4):
     changer_informations_et_joueur()
     affichage()
 
+def changer_avatar(numeroJoueur, fichierImage):
+    if(numeroJoueur==1):
+        item = canPhoto.create_image(35, 35, image = fichierImage)
+    else:
+        item = canPhoto.create_image(430-35, 35, image = fichierImage)
+
+def afficher_aide():
+    messagebox.showinfo("Principe du jeu Puissance 4", "Le but du Puissance 4 consiste à aligner 4 pions pour gagner avant l'adversaire, que ce soit horizontalement, verticalement, ou en diagonale !\n\nTout se joue avec le clic gauche de la souris, et vous pouvez jouer à 2 ou bien seul contre une IA !")
+
+def afficher_apropos():
+    messagebox.showinfo("A propos...", "Jeu réalisé par Sébastien BRANLY et Axel VAINDAL en L1-C1 dans le cadre du Projet MPI de l'année scolaire 2012-2013")
+
 #PROGRAMME PRINCIPAL :
 #_____________________
 
@@ -273,13 +294,10 @@ grille = [[0,0,0,0,0,0,0],
 
 fenetre = Tk()
 
-can = Canvas(fenetre, width = 430, height = 370, bg = couleurPlateau)
-label1 = Label(fenetre, fg = couleur2, bg = 'grey')
-
 menubar = Menu(fenetre)
 nouvelle_partie= Menu(menubar, tearoff=0)
-nouvelle_partie.add_command(label="Nouvelle partie à 1 joueur (IA moyenne)", command=lambda: jeu(True))
-nouvelle_partie.add_command(label="Nouvelle partie à 2 joueurs", command=lambda: jeu(False))
+nouvelle_partie.add_command(label="Nouvelle partie à 1 joueur (IA moyenne)", command=lambda: nouveau_jeu(True))
+nouvelle_partie.add_command(label="Nouvelle partie à 2 joueurs", command=lambda: nouveau_jeu(False))
 nouvelle_partie.add_separator()
 nouvelle_partie.add_command(label="Quitter le jeu", command=fenetre.destroy)
 menubar.add_cascade(label="Parties", menu=nouvelle_partie)
@@ -305,9 +323,48 @@ options.add_cascade(label="Couleur du joueur 2", menu=sous_menu2)
 
 menubar.add_cascade(label="Modifier les couleurs", menu=options)
 
-can.bind('<Button-1>', fonction_evenement) #On attend le clic
-fenetre.config(menu=menubar)
-fenetre.title("Puissance 4 !")
+avatar = Menu(menubar, tearoff=0)
 
-jeu(False)
+sous_menuAvatar1=Menu(menubar, tearoff=0)
+sous_menuAvatar1.add_command(label="Mario", command=lambda: changer_avatar(1, photoMario))
+sous_menuAvatar1.add_command(label="Pikachu", command=lambda: changer_avatar(1, photoPikachu))
+sous_menuAvatar1.add_command(label="Sonic", command=lambda: changer_avatar(1, photoSonic))
+avatar.add_cascade(label="Avatar du joueur 1", menu=sous_menuAvatar1)
+
+sous_menuAvatar2=Menu(menubar, tearoff=0)
+sous_menuAvatar2.add_command(label="Sackboy", command=lambda: changer_avatar(2, photoSackboy))
+sous_menuAvatar2.add_command(label="Kirby", command=lambda: changer_avatar(2, photoKirby))
+sous_menuAvatar2.add_command(label="Zelda", command=lambda: changer_avatar(2, photoZelda))
+avatar.add_cascade(label="Avatar du joueur 2", menu=sous_menuAvatar2)
+
+menubar.add_cascade(label="Modifier les avatars", menu=avatar)
+
+aide= Menu(menubar, tearoff=0)
+aide.add_command(label="Principe du jeu", command=afficher_aide)
+aide.add_command(label="A propos...", command=afficher_apropos)
+menubar.add_cascade(label="Aide", menu=aide)
+
+can = Canvas(fenetre, width = 430, height = 370, bg = couleurPlateau)
+canPhoto = Canvas(fenetre, width = 430, height = 70)
+label1 = Label(fenetre, fg = couleur2, bg = 'grey')
+
+photoOrdinateur = PhotoImage(file ='avatarOrdinateur.gif')
+
+photoMario = PhotoImage(file ='avatarMario.gif')
+photoPikachu = PhotoImage(file ='avatarPikachu.gif')
+photoSonic = PhotoImage(file ='avatarSonic.gif')
+
+photoKirby = PhotoImage(file ='avatarKirby.gif')
+photoZelda = PhotoImage(file ='avatarZelda.gif')
+photoSackboy = PhotoImage(file ='avatarSackboy.gif')
+
+changer_avatar(1, photoMario)
+changer_avatar(2, photoSackboy)
+
+canPhoto.pack()
+can.bind('<Button-1>', fonction_evenement) #On attend le clic
+fenetre.config(menu=menubar, bg='grey')
+fenetre.title("Puissance 4 de Sebas et Axel !")
+
+nouveau_jeu(False)
 fenetre.mainloop()
