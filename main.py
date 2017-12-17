@@ -35,7 +35,7 @@ def event_function(event):
                 update_info_and_player()
                 display()
 
-	# If possible, we let the computer make its move right after the player's
+    # If possible, we let the computer make its move right after the player's
     if(numberOfMoves < gridNumberOfCells and winner == 0 and isAIMode and playerHasPlayed):
         alreadyPlayed = False
 
@@ -46,23 +46,23 @@ def event_function(event):
                     if(could_add_disc(column)):
                         winner = global_alignment(required_discs_aligment)
                         
-						# In that case, the computer confirms its move as it makes it win the game
+			# In that case, the computer confirms its move as it makes it win the game
                         if(winner == 2):
                             numberOfMoves += 1
                             alreadyPlayed = True
-						# We have to remove the computer's disc because we noticed it doesn't make it win the game
+                        # We have to remove the computer's disc because we noticed it doesn't make it win the game
                         else:
                             grid[discLign][discColumn] = 0
 
         # OTHERWISE: THE COMPUTER DEFENDS ITSELF THE BEST WAY IT CAN
-		# reversed keyword as the computer is trying to counter the best alignments first
+	# reversed keyword as the computer is trying to counter the best alignments first
         for alignmentToCounter in reversed(range(required_discs_aligment + 1)):
             for column in range(gridWidth):
                 if(not alreadyPlayed):
                     player = 1
                     if(could_add_disc(column)):
                         winnerForSuchAnAlignment = global_alignment(alignmentToCounter)
-						# In that case, the computer has to play here to defend itself
+			# In that case, the computer has to play here to defend itself
                         if(winnerForSuchAnAlignment == 1):
                             player = 2
                             grid[discLign][discColumn] = player
@@ -89,7 +89,7 @@ def display():
                             can.create_oval(x1, y1, x2, y2, fill = colors[grid[y][x]])
     can.pack(side = 'top', padx = padX, pady = padY)
 
-# Updates the information banner displayed at the top of the grid
+# Updates the information banner displayed above the grid
 # ALSO UPDATES THE player VARIABLE
 def update_info_and_player():
                 global player
@@ -195,7 +195,7 @@ def initialization():
     global discColumn
     initialize_grid(0)
     column = 0
-	# 2 because at the beginning, update_info_and_player is going to switch it back to 1
+    # 2 because at the beginning, update_info_and_player is going to switch it back to 1
     player = 2
     winner = 0
     numberOfMoves = 0
@@ -207,7 +207,7 @@ def initialization():
 def new_game(playAgainstAI):
     global isAIMode
     
-	# If the number of players has changed (because of the mode), we have to update both the avatars and isAIMode variable
+    # If the number of players has changed (because of the mode), we have to update both the avatars and isAIMode variable
     if(isAIMode != playAgainstAI):
         isAIMode = playAgainstAI
         if(isAIMode):
@@ -234,20 +234,6 @@ def edit_color(c1, c2, c3, c4):
     else:
         player = 1
     update_info_and_player()
-    display()
-
-def edit_size(newDiscSize):
-    global discSize
-    global boardWidth
-    global boardHeight
-    global discOffset
-    global complementaryDiscOffset
-
-    discSize = newDiscSize
-    boardWidth = gridWidth * discSize + padX
-    boardHeight = gridHeight * discSize + padY
-    discOffset = discSize // 2 + padX // 2
-    complementaryDiscOffset = discSize - discOffset
     display()
 
 def change_avatar(playerNumber, imageFile):
@@ -281,7 +267,7 @@ gridHeight = len(grid)
 gridNumberOfCells = gridWidth * gridHeight
 padX = 10
 padY = 10
-discSize = 90
+discSize = 60
 boardWidth = gridWidth * discSize + padX
 boardHeight = gridHeight * discSize + padY
 imagesOffset = 35
